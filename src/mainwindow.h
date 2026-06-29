@@ -1,0 +1,98 @@
+#pragma once
+
+#include <QWidget>
+#include <QTabWidget>
+#include <QLabel>
+#include <QPushButton>
+#include <QProgressBar>
+#include <QComboBox>
+#include <QLineEdit>
+#include <QListWidget>
+#include <QCheckBox>
+
+#include "updatechecker.h"
+
+class UpdateChecker;
+class LockManager;
+class PasswordManager;
+class AutostartManager;
+
+class MainWindow : public QWidget {
+    Q_OBJECT
+public:
+    explicit MainWindow(UpdateChecker *checker,
+                        LockManager *lockManager,
+                        PasswordManager *passwordManager,
+                        AutostartManager *autostartManager,
+                        QWidget *parent = nullptr);
+
+    void refreshUpdateSummary();
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
+signals:
+    void closeRequested();
+
+private slots:
+    void onCheckNow();
+    void onViewUpdates();
+    void onInstallAll();
+    void onCheckFinished(bool success);
+    void onUpdatesFound(const QList<UpdateInfo> &updates);
+    void onInstallFinished(bool success, const QString &message);
+    void onInstallProgress(int percent);
+    void onInstallOutput(const QString &line);
+    void onIntervalChanged(int index);
+    void onAutoStartToggled(bool checked);
+    void onAutoUpdateToggled(bool checked);
+    void onSavePassword();
+    void onClearPassword();
+    void onIconStyleChanged(int index);
+    void onRefreshLocks();
+    void onAddLock();
+    void onRemoveLock();
+    void onPasswordRequired();
+
+private:
+    QWidget *createHomeTab();
+    QWidget *createSettingsTab();
+    QWidget *createLocksTab();
+    QWidget *createAboutTab();
+    void updatePasswordIndicator();
+
+    UpdateChecker *m_checker;
+    LockManager *m_lockManager;
+    PasswordManager *m_passwordManager;
+    AutostartManager *m_autostartManager;
+
+    QTabWidget *m_tabs;
+
+    // Home tab
+    QLabel *m_zypperCountLabel;
+    QLabel *m_flatpakCountLabel;
+    QLabel *m_snapCountLabel;
+    QLabel *m_statusLabel;
+    QLabel *m_lastCheckLabel;
+    QPushButton *m_checkNowBtn;
+    QPushButton *m_viewUpdatesBtn;
+    QPushButton *m_installAllBtn;
+    QProgressBar *m_progressBar;
+    QLabel *m_progressLabel;
+
+    // Settings tab
+    QComboBox *m_intervalCombo;
+    QCheckBox *m_autoStartCheck;
+    QCheckBox *m_autoUpdateCheck;
+    QComboBox *m_iconStyleCombo;
+    QLineEdit *m_passwordEdit;
+    QPushButton *m_savePasswordBtn;
+    QPushButton *m_clearPasswordBtn;
+    QLabel *m_passwordStatus;
+
+    // Locks tab
+    QListWidget *m_locksList;
+    QPushButton *m_addLockBtn;
+    QPushButton *m_removeLockBtn;
+    QPushButton *m_refreshLocksBtn;
+};

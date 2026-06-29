@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=openSUSE Update Applet
+Comment=System tray applet for openSUSE updates
+Exec=opensuse-update-applet
+Icon=opensuse-update-applet
+Categories=System;Utility;
+Terminal=false
+StartupNotify=false
+X-GNOME-Autostart-enabled=false

@@ -1,0 +1,7 @@
+build/
+*.o
+*.user
+moc_*
+qrc_*
+ui_*
+.cmake/
