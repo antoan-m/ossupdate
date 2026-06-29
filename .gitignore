@@ -1,7 +1,10 @@
 build/
+build-release/
 *.o
 *.user
 moc_*
 qrc_*
 ui_*
 .cmake/
+*.rpm
+guide.md

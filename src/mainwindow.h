@@ -16,6 +16,7 @@ class UpdateChecker;
 class LockManager;
 class PasswordManager;
 class AutostartManager;
+class SelfUpdater;
 
 class MainWindow : public QWidget {
     Q_OBJECT
@@ -24,6 +25,7 @@ public:
                         LockManager *lockManager,
                         PasswordManager *passwordManager,
                         AutostartManager *autostartManager,
+                        SelfUpdater *selfUpdater,
                         QWidget *parent = nullptr);
 
     void refreshUpdateSummary();
@@ -53,6 +55,9 @@ private slots:
     void onAddLock();
     void onRemoveLock();
     void onPasswordRequired();
+    void onCheckSelfUpdate();
+    void onSelfUpdateAvailable(const QString &version, const QString &downloadUrl);
+    void onSelfUpdateInstall();
 
 private:
     QWidget *createHomeTab();
@@ -65,6 +70,7 @@ private:
     LockManager *m_lockManager;
     PasswordManager *m_passwordManager;
     AutostartManager *m_autostartManager;
+    SelfUpdater *m_selfUpdater;
 
     QTabWidget *m_tabs;
 
@@ -95,4 +101,12 @@ private:
     QPushButton *m_addLockBtn;
     QPushButton *m_removeLockBtn;
     QPushButton *m_refreshLocksBtn;
+
+    // About tab
+    QLabel *m_versionStatusLabel;
+    QPushButton *m_checkUpdateBtn;
+    QPushButton *m_installUpdateBtn;
+
+    // Settings tab
+    QCheckBox *m_autoUpdateAppCheck;
 };

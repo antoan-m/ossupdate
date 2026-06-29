@@ -24,10 +24,14 @@ public:
     bool useSymbolicIcons() const;
     void setUseSymbolicIcons(bool symbolic);
 
+    bool autoUpdateApp() const;
+    void setAutoUpdateApp(bool enabled);
+
 signals:
     void checkIntervalChanged(int minutes);
     void autoStartChanged(bool enabled);
     void autoUpdateChanged(bool enabled);
+    void autoUpdateAppChanged(bool enabled);
     void iconStyleChanged(bool symbolic);
 
 private:

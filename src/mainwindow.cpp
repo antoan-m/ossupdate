@@ -3,6 +3,7 @@
 #include "lockmanager.h"
 #include "passwordmanager.h"
 #include "autostartmanager.h"
+#include "selfupdater.h"
 #include "updatelistdialog.h"
 #include "settings.h"
 
@@ -21,12 +22,14 @@ MainWindow::MainWindow(UpdateChecker *checker,
                        LockManager *lockManager,
                        PasswordManager *passwordManager,
                        AutostartManager *autostartManager,
+                       SelfUpdater *selfUpdater,
                        QWidget *parent)
     : QWidget(parent)
     , m_checker(checker)
     , m_lockManager(lockManager)
     , m_passwordManager(passwordManager)
     , m_autostartManager(autostartManager)
+    , m_selfUpdater(selfUpdater)
 {
     setWindowTitle(QStringLiteral("openSUSE Update Manager"));
     setMinimumSize(720, 660);
@@ -48,6 +51,32 @@ MainWindow::MainWindow(UpdateChecker *checker,
     connect(m_checker, &UpdateChecker::installProgress, this, &MainWindow::onInstallProgress);
     connect(m_checker, &UpdateChecker::installOutput, this, &MainWindow::onInstallOutput);
     connect(m_checker, &UpdateChecker::passwordRequired, this, &MainWindow::onPasswordRequired);
+    connect(m_selfUpdater, &SelfUpdater::updateAvailable, this, &MainWindow::onSelfUpdateAvailable);
+    connect(m_selfUpdater, &SelfUpdater::installFinished, this, [this](bool success, const QString &msg) {
+        if (success) {
+            QMessageBox::information(this, QStringLiteral("Update Installed"), msg);
+        } else {
+            QMessageBox::warning(this, QStringLiteral("Update Failed"), msg);
+        }
+    });
+    connect(m_selfUpdater, &SelfUpdater::checkFinished, this, [this](bool) {
+        m_checkUpdateBtn->setEnabled(true);
+    });
+    connect(m_selfUpdater, &SelfUpdater::passwordRequired, this, [this]() {
+        bool ok;
+        QString pwd = QInputDialog::getText(this, QStringLiteral("Sudo Password Required"),
+                                             QStringLiteral("Enter sudo password to install app update:"),
+                                             QLineEdit::Password, QString(), &ok);
+        if (ok && !pwd.isEmpty())
+            m_selfUpdater->providePassword(pwd);
+        else
+            m_selfUpdater->providePassword(QString());
+    });
+
+    QTimer::singleShot(0, this, [this]() {
+        connect(m_checkUpdateBtn, &QPushButton::clicked, this, &MainWindow::onCheckSelfUpdate);
+        connect(m_installUpdateBtn, &QPushButton::clicked, this, &MainWindow::onSelfUpdateInstall);
+    });
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -191,9 +220,13 @@ QWidget *MainWindow::createSettingsTab()
     intervalRow->addStretch();
     checkLayout->addLayout(intervalRow);
 
-    m_autoUpdateCheck = new QCheckBox(QStringLiteral("Auto-apply updates silently (no confirmation)"));
+    m_autoUpdateCheck = new QCheckBox(QStringLiteral("Auto-apply system updates silently (no confirmation)"));
     m_autoUpdateCheck->setChecked(Settings::instance()->autoUpdate());
     checkLayout->addWidget(m_autoUpdateCheck);
+
+    m_autoUpdateAppCheck = new QCheckBox(QStringLiteral("Auto-update this app when new version released"));
+    m_autoUpdateAppCheck->setChecked(Settings::instance()->autoUpdateApp());
+    checkLayout->addWidget(m_autoUpdateAppCheck);
 
     layout->addWidget(checkGroup);
 
@@ -256,6 +289,9 @@ QWidget *MainWindow::createSettingsTab()
             this, &MainWindow::onIntervalChanged);
     connect(m_autoStartCheck, &QCheckBox::toggled, this, &MainWindow::onAutoStartToggled);
     connect(m_autoUpdateCheck, &QCheckBox::toggled, this, &MainWindow::onAutoUpdateToggled);
+    connect(m_autoUpdateAppCheck, &QCheckBox::toggled, this, [this](bool checked) {
+        Settings::instance()->setAutoUpdateApp(checked);
+    });
     connect(m_iconStyleCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &MainWindow::onIconStyleChanged);
     connect(m_savePasswordBtn, &QPushButton::clicked, this, &MainWindow::onSavePassword);
@@ -480,6 +516,31 @@ void MainWindow::onIconStyleChanged(int index)
     Settings::instance()->setUseSymbolicIcons(symbolic);
 }
 
+void MainWindow::onCheckSelfUpdate()
+{
+    m_checkUpdateBtn->setEnabled(false);
+    m_versionStatusLabel->setText(QStringLiteral("Checking for updates..."));
+    m_selfUpdater->checkNow();
+}
+
+void MainWindow::onSelfUpdateAvailable(const QString &version, const QString &downloadUrl)
+{
+    Q_UNUSED(downloadUrl);
+    m_versionStatusLabel->setText(
+        QStringLiteral("Current: %1  |  Latest: %2").arg(QStringLiteral(APP_VERSION)).arg(version));
+    m_installUpdateBtn->setVisible(true);
+
+    if (Settings::instance()->autoUpdateApp())
+        m_selfUpdater->downloadAndInstall();
+}
+
+void MainWindow::onSelfUpdateInstall()
+{
+    m_installUpdateBtn->setEnabled(false);
+    m_installUpdateBtn->setText(QStringLiteral("Downloading..."));
+    m_selfUpdater->downloadAndInstall();
+}
+
 void MainWindow::onPasswordRequired()
 {
     bool ok;
@@ -547,6 +608,30 @@ QWidget *MainWindow::createAboutTab()
     licenseLabel->setAlignment(Qt::AlignCenter);
     licenseLabel->setWordWrap(true);
     layout->addWidget(licenseLabel);
+
+    layout->addSpacing(32);
+
+    auto *updateGroup = new QGroupBox(QStringLiteral("App Updates"));
+    auto *updateLayout = new QVBoxLayout(updateGroup);
+
+    m_versionStatusLabel = new QLabel(
+        QStringLiteral("Current: %1").arg(QStringLiteral(APP_VERSION)));
+    m_versionStatusLabel->setObjectName(QStringLiteral("subheading"));
+    updateLayout->addWidget(m_versionStatusLabel);
+
+    auto *updateBtnRow = new QHBoxLayout();
+    m_checkUpdateBtn = new QPushButton(QStringLiteral("Check for Updates"));
+    m_checkUpdateBtn->setObjectName(QStringLiteral("secondary"));
+    updateBtnRow->addWidget(m_checkUpdateBtn);
+
+    m_installUpdateBtn = new QPushButton(QStringLiteral("Download & Install Update"));
+    m_installUpdateBtn->setVisible(false);
+    updateBtnRow->addWidget(m_installUpdateBtn);
+
+    updateBtnRow->addStretch();
+    updateLayout->addLayout(updateBtnRow);
+
+    layout->addWidget(updateGroup);
 
     layout->addStretch();
     return widget;

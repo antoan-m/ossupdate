@@ -33,6 +33,7 @@ set(SOURCES
     src/passwordmanager.cpp
     src/autostartmanager.cpp
     src/settings.cpp
+    src/selfupdater.cpp
 )
 
 set(HEADERS
@@ -44,6 +45,7 @@ set(HEADERS
     src/passwordmanager.h
     src/autostartmanager.h
     src/settings.h
+    src/selfupdater.h
 )
 
 set(RESOURCES
@@ -65,6 +67,8 @@ if(QTKEYCHAIN_INCLUDE_DIRS)
 endif()
 
 target_include_directories(opensuse-update-applet PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+target_compile_definitions(opensuse-update-applet PRIVATE APP_VERSION="${PROJECT_VERSION}")
 
 install(TARGETS opensuse-update-applet RUNTIME DESTINATION bin)
 

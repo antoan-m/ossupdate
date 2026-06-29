@@ -18,28 +18,37 @@ A Qt6 system tray applet that periodically checks for openSUSE system updates an
 - **Symbolic icons** — configurable tray icons: colored or system-palette symbolic
 - **Light / Dark mode** — automatic theme detection with QSS styling
 
-## Requirements
+## Installation
 
-- openSUSE Tumbleweed or Leap
-- Qt6 (Widgets, Svg, Network, DBus)
-- qtkeychain-qt6
-- CMake
-- gcc-c++
+### Option 1: Prebuilt RPM (easiest)
 
-## Building
+Download the latest `.rpm` from the [Releases](https://github.com/antoan-m/opensuse_autoupdate_applet/releases) page and install:
+
+```bash
+sudo zypper install opensuse-update-applet-*.rpm
+```
+
+### Option 2: Build from Source
 
 ```bash
 # Install dependencies
 sudo zypper install -y qt6-widgets-devel qt6-svg-devel qt6-network-devel qt6-dbus-devel qtkeychain-qt6-devel cmake gcc-c++
 
-# Build
-mkdir build && cd build
-cmake ..
-make
-
-# Install (optional)
-sudo make install
+# Build & install
+cmake -B build-release -DCMAKE_BUILD_TYPE=Release
+cmake --build build-release
+sudo cmake --install build-release
 ```
+
+### Option 3: Build RPM yourself
+
+```bash
+sudo zypper install -y rpm-build
+rpmbuild -ba opensuse-update-applet.spec
+sudo zypper install ~/rpmbuild/RPMS/x86_64/opensuse-update-applet-*.rpm
+```
+
+> See [guide.md](guide.md) for all build and install variants.
 
 ## Usage
 

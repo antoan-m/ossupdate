@@ -63,6 +63,19 @@ void Settings::setLastCheckTime(const QString &time)
     m_settings.setValue(QStringLiteral("last_check_time"), time);
 }
 
+bool Settings::autoUpdateApp() const
+{
+    return m_settings.value(QStringLiteral("auto_update_app"), false).toBool();
+}
+
+void Settings::setAutoUpdateApp(bool enabled)
+{
+    if (enabled != autoUpdateApp()) {
+        m_settings.setValue(QStringLiteral("auto_update_app"), enabled);
+        emit autoUpdateAppChanged(enabled);
+    }
+}
+
 bool Settings::useSymbolicIcons() const
 {
     return m_settings.value(QStringLiteral("symbolic_icons"), false).toBool();

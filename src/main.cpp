@@ -8,6 +8,7 @@
 #include "autostartmanager.h"
 #include "lockmanager.h"
 #include "updatechecker.h"
+#include "selfupdater.h"
 #include "traymanager.h"
 #include "mainwindow.h"
 
@@ -42,9 +43,10 @@ int main(int argc, char *argv[])
     auto *autostartManager = new AutostartManager();
     auto *lockManager = new LockManager(passwordManager);
     auto *updateChecker = new UpdateChecker(passwordManager);
+    auto *selfUpdater = new SelfUpdater(passwordManager);
 
     auto *mainWindow = new MainWindow(
-        updateChecker, lockManager, passwordManager, autostartManager);
+        updateChecker, lockManager, passwordManager, autostartManager, selfUpdater);
 
     auto *trayManager = new TrayManager(updateChecker, mainWindow);
 
@@ -70,6 +72,7 @@ int main(int argc, char *argv[])
     trayManager->show();
 
     updateChecker->start();
+    selfUpdater->start();
 
     return app.exec();
 }
