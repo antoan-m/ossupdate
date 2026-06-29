@@ -32,8 +32,8 @@ MainWindow::MainWindow(UpdateChecker *checker,
     , m_selfUpdater(selfUpdater)
 {
     setWindowTitle(QStringLiteral("openSUSE Update Manager"));
-    setMinimumSize(720, 660);
-    resize(720, 660);
+    setMinimumSize(770, 660);
+    resize(770, 660);
 
     auto *mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);

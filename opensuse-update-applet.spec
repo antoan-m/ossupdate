@@ -1,7 +1,7 @@
 %define _name opensuse-update-applet
 
 Name:           opensuse-update-applet
-Version:        1.0.0
+Version:        1.1.0
 Release:        1
 Summary:        System tray applet for openSUSE zypper/flatpak/snap updates
 License:        GPL-3.0-only
@@ -46,5 +46,8 @@ locking, and sudo password storage via system keychain.
 %{_datadir}/icons/hicolor/scalable/apps/%{_name}.svg
 
 %changelog
-* Mon Jun 29 2026 antoan-m <antoan@localhost.localdomain> 1.0.0-1
-- Initial release
+* Mon Jun 29 2026 antoan-m <antoan@localhost.localdomain> 1.1.0-1
+- Self-update via GitHub release checker
+- Auto-update app option in settings
+- Symbolic tray icons using system palette colors
+- RPM packaging with .spec file
