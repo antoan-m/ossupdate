@@ -27,7 +27,7 @@ A Qt6 system tray applet that periodically checks for openSUSE system updates an
 Download the latest `.rpm` from the [Releases](https://github.com/antoan-m/opensuse_autoupdate_applet/releases) page and install:
 
 ```bash
-sudo zypper install --no-gpg-checks opensuse-update-applet-*.rpm
+sudo zypper --no-gpg-checks install opensuse-update-applet-*.rpm
 ```
 
 ### Option 2: Build from Source
