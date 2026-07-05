@@ -224,11 +224,11 @@ QWidget *MainWindow::createHomeTab()
     m_updateTree->setSortingEnabled(true);
     m_updateTree->setMinimumHeight(120);
     m_updateTree->header()->setStretchLastSection(false);
-    m_updateTree->header()->setSectionResizeMode(0, QHeaderView::Interactive);
-    m_updateTree->header()->setSectionResizeMode(1, QHeaderView::Interactive);
-    m_updateTree->header()->setSectionResizeMode(2, QHeaderView::Interactive);
-    m_updateTree->header()->setSectionResizeMode(3, QHeaderView::Interactive);
-    m_updateTree->header()->setSectionResizeMode(4, QHeaderView::Interactive);
+    m_updateTree->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    m_updateTree->header()->setSectionResizeMode(1, QHeaderView::Stretch);
+    m_updateTree->header()->setSectionResizeMode(2, QHeaderView::Stretch);
+    m_updateTree->header()->setSectionResizeMode(3, QHeaderView::Stretch);
+    m_updateTree->header()->setSectionResizeMode(4, QHeaderView::Stretch);
     layout->addWidget(m_updateTree, 1);
 
     auto *statusGroup = new QGroupBox(QStringLiteral("Status"));
