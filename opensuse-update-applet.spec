@@ -1,12 +1,12 @@
 %define _name opensuse-update-applet
 
 Name:           opensuse-update-applet
-Version:        1.1.1
+Version:        1.2.0
 Release:        1
 Summary:        System tray applet for openSUSE zypper/flatpak/snap updates
 License:        GPL-3.0-only
 URL:            https://github.com/antoan-m/opensuse_autoupdate_applet
-Source:         %{_name}-%{version}.tar.xz
+Source:         %{_name}-%{version}.tar.gz
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
 BuildRequires:  qt6-widgets-devel
@@ -46,6 +46,10 @@ locking, and sudo password storage via system keychain.
 %{_datadir}/icons/hicolor/scalable/apps/%{_name}.svg
 
 %changelog
+* Sun Jul 05 2026 antoan-m <antoan@localhost.localdomain> 1.2.0-1
+- Alphabetically sorted update list
+- All columns resizable (interactive mode)
+
 * Mon Jun 29 2026 antoan-m <antoan@localhost.localdomain> 1.1.0-1
 - Self-update via GitHub release checker
 - Auto-update app option in settings

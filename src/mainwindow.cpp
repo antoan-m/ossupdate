@@ -18,6 +18,7 @@
 #include <QTimer>
 #include <QHeaderView>
 #include <QPainter>
+#include <algorithm>
 #include <QPainterPath>
 #include <QGuiApplication>
 
@@ -223,11 +224,11 @@ QWidget *MainWindow::createHomeTab()
     m_updateTree->setSortingEnabled(true);
     m_updateTree->setMinimumHeight(120);
     m_updateTree->header()->setStretchLastSection(false);
-    m_updateTree->header()->setSectionResizeMode(0, QHeaderView::Stretch);
-    m_updateTree->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-    m_updateTree->header()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-    m_updateTree->header()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
-    m_updateTree->header()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    m_updateTree->header()->setSectionResizeMode(0, QHeaderView::Interactive);
+    m_updateTree->header()->setSectionResizeMode(1, QHeaderView::Interactive);
+    m_updateTree->header()->setSectionResizeMode(2, QHeaderView::Interactive);
+    m_updateTree->header()->setSectionResizeMode(3, QHeaderView::Interactive);
+    m_updateTree->header()->setSectionResizeMode(4, QHeaderView::Interactive);
     layout->addWidget(m_updateTree, 1);
 
     auto *statusGroup = new QGroupBox(QStringLiteral("Status"));
@@ -465,7 +466,11 @@ void MainWindow::populateUpdateTree(const QList<UpdateInfo> &updates)
         m_lockSelectedBtn->setEnabled(false);
         return;
     }
-    for (const auto &info : updates) {
+    QList<UpdateInfo> sorted = updates;
+    std::sort(sorted.begin(), sorted.end(), [](const UpdateInfo &a, const UpdateInfo &b) {
+        return a.name.toLower() < b.name.toLower();
+    });
+    for (const auto &info : sorted) {
         auto *item = new QTreeWidgetItem();
         item->setText(0, info.name);
         item->setText(1, info.repository);
