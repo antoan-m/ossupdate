@@ -221,7 +221,7 @@ QWidget *MainWindow::createHomeTab()
     });
     m_updateTree->setRootIsDecorated(false);
     m_updateTree->setAlternatingRowColors(true);
-    m_updateTree->setSortingEnabled(true);
+    m_updateTree->setSortingEnabled(false);
     m_updateTree->setMinimumHeight(120);
     m_updateTree->header()->setStretchLastSection(false);
     m_updateTree->header()->setSectionResizeMode(0, QHeaderView::Stretch);

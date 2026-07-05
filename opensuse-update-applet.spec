@@ -47,8 +47,11 @@ locking, and sudo password storage via system keychain.
 
 %changelog
 * Sun Jul 05 2026 antoan-m <antoan@localhost.localdomain> 1.2.0-1
-- Alphabetically sorted update list
-- All columns resizable (interactive mode)
+- Fixes:
+  - Sort order from Z-A to A-Z
+  - Alphabetically sorted update list
+  - Columns stretch to fill window width
+  - Zypper exit codes 4/5/6/7 treated as success
 
 * Mon Jun 29 2026 antoan-m <antoan@localhost.localdomain> 1.1.0-1
 - Self-update via GitHub release checker

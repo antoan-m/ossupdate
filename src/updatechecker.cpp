@@ -398,7 +398,7 @@ void UpdateChecker::onInstallProcessFinished()
 
     switch (m_installPhase) {
     case PhaseZypper:
-        if (ec == 102 || ec == 103)
+        if (ec == 4 || ec == 5 || ec == 6 || ec == 7 || ec == 102 || ec == 103)
             success = true;
         if (!success) {
             QString msg;
@@ -416,7 +416,10 @@ void UpdateChecker::onInstallProcessFinished()
             finishAllInstalls(false, msg);
             return;
         }
-        emit installOutput(QStringLiteral("Zypper updates done"));
+        if (ec == 4 || ec == 5 || ec == 102)
+            emit installOutput(QStringLiteral("Zypper updates done (reboot may be required)"));
+        else
+            emit installOutput(QStringLiteral("Zypper updates done"));
         if (!m_flatpakUpdates.isEmpty()) {
             doFlatpakInstall();
             return;
