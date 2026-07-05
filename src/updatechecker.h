@@ -49,6 +49,7 @@ signals:
     void installFinished(bool success, const QString &message);
     void errorOccurred(const QString &message);
     void passwordRequired();
+    void rebootRequired();
 
 private slots:
     void onZypperListFinished();
@@ -95,4 +96,5 @@ private:
     int m_completedCount;
     InstallPhase m_installPhase;
     QString m_cachedSudoPassword;
+    bool m_rebootRequired = false;
 };

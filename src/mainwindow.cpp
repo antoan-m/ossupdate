@@ -55,6 +55,9 @@ MainWindow::MainWindow(UpdateChecker *checker,
     connect(m_checker, &UpdateChecker::installProgress, this, &MainWindow::onInstallProgress);
     connect(m_checker, &UpdateChecker::installOutput, this, &MainWindow::onInstallOutput);
     connect(m_checker, &UpdateChecker::passwordRequired, this, &MainWindow::onPasswordRequired);
+    connect(m_checker, &UpdateChecker::rebootRequired, this, [this]() {
+        m_rebootStatusLabel->setVisible(true);
+    });
     connect(m_selfUpdater, &SelfUpdater::updateAvailable, this, &MainWindow::onSelfUpdateAvailable);
     connect(m_selfUpdater, &SelfUpdater::updateNotAvailable, this, [this]() {
         m_versionStatusLabel->setText(
@@ -239,6 +242,12 @@ QWidget *MainWindow::createHomeTab()
 
     m_statusLabel = new QLabel(QStringLiteral("Ready"));
     statusLayout->addWidget(m_statusLabel);
+
+    m_rebootStatusLabel = new QLabel(
+        QStringLiteral("Logout or reboot may be required to complete updates."));
+    m_rebootStatusLabel->setObjectName(QStringLiteral("warning"));
+    m_rebootStatusLabel->setVisible(false);
+    statusLayout->addWidget(m_rebootStatusLabel);
 
     m_progressLabel = new QLabel();
     m_progressLabel->setVisible(false);
@@ -567,6 +576,7 @@ void MainWindow::onInstallFinished(bool success, const QString &message)
         populateUpdateTree({});
     } else {
         m_statusLabel->setText(QStringLiteral("Installation failed"));
+        m_rebootStatusLabel->setVisible(false);
         QMessageBox::warning(this, QStringLiteral("Installation Failed"), message);
     }
 }

@@ -5,6 +5,7 @@
         <file>icons/tray_idle.svg</file>
         <file>icons/tray_checking.svg</file>
         <file>icons/tray_updates.svg</file>
+        <file>icons/tray_reboot.svg</file>
         <file>icons/tray_idle_symbolic.svg</file>
         <file>icons/tray_checking_symbolic.svg</file>
         <file>icons/tray_updates_symbolic.svg</file>

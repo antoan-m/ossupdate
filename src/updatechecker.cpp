@@ -103,6 +103,7 @@ void UpdateChecker::checkNow()
     m_snapUpdates.clear();
     m_allUpdates.clear();
     m_pendingChecks = 0;
+    m_rebootRequired = false;
 
     emit checkStarted();
 
@@ -328,6 +329,10 @@ void UpdateChecker::finishAllInstalls(bool success, const QString &message)
     }
 
     emit installFinished(success, message);
+    if (m_rebootRequired) {
+        emit rebootRequired();
+        m_rebootRequired = false;
+    }
     if (success)
         checkNow();
 }
@@ -416,10 +421,12 @@ void UpdateChecker::onInstallProcessFinished()
             finishAllInstalls(false, msg);
             return;
         }
-        if (ec == 4 || ec == 5 || ec == 102)
-            emit installOutput(QStringLiteral("Zypper updates done (reboot may be required)"));
-        else
+        if (ec == 4 || ec == 5) {
+            m_rebootRequired = true;
+            emit installOutput(QStringLiteral("Zypper updates done (logout or reboot may be required)"));
+        } else {
             emit installOutput(QStringLiteral("Zypper updates done"));
+        }
         if (!m_flatpakUpdates.isEmpty()) {
             doFlatpakInstall();
             return;
